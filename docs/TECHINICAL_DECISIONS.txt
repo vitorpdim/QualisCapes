@@ -41,11 +41,19 @@
     =========================================
 
  # 05: ---- Com o banco populado, começo a construir a API REST 
+ # optei por dividir em 3 etapas para manter a organização
 
-  optei por dividir em 3 etapas para manter a organização
   1 task - Repository: adicionar os metodos de busca para ler do banco
   2 task - Controller: receber  a requisição da web e chamar o repository
   3 task - Router/server: subir o servidor express
+
+  Em backend/src/domain/repositories/PeriodicoRepository.ts
+  fiz o seguinte
+
+  listarAreas: retorna só as áreas unicas pra preencher o filtro lateral do frontend
+  buscarPeriodicos: É a base da API, ela suporta filtros opcionais e já vem com paginação limit e offset implementada para não travar o navegador
+  tentando mandar 171mil periódicos de uma vez
+  obterResumoPorEstrato: Pede para o banco de dados contar quantos periódicos existem em cada nota (A1, B2, etc), já formatado para usar em um gráfico de barras depois
 
 # =============
 #  DECISÕES 
