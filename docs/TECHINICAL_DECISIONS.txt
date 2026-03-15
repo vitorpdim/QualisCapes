@@ -65,6 +65,10 @@
   - services/: comunicação com a API
   - types/: definições TS compartilhadas
 
+  # 08: --- Criei dois custom hooks especializados
+  usePeriodicos() que gerencia a busca de periódicos com estado de load, erro, paginação e dados
+  useEstatisticas() que gerencia busca de estatísticas com estado de loading e erro
+
 # ============================
 #  DECISÕES TÉCNICAS (BACKEND)
 # ============================
@@ -136,3 +140,8 @@ e manutenível
 - obterEstatisticas(): busca distribuição por estrato
 
 - Justificativa: desacoplar os componentes da implementação específica da API
+
+# Custom hooks para estado e side effects
+
+- Contexto: Componentes precisam gerenciar estado assíncrono, loading states e tratamento de erros de forma clean
+- Justificativa: eles encapsulam lógicas muito complexas e efeitos colaterais, os componentes ficam mais clean e focados na exibição
