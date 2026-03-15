@@ -1,7 +1,7 @@
  # 01: ----- Analisei o enunciado e comecei a etruturar os planos de requisitos
  # Mapeei referencias (Benchmarking) para criar uma interface superior à original
 
-    1. Plataforma sucupira:
+    1. Plataforma sucupira
     2. Scimago journal & country rank
     3. Google scholar metrics
 
@@ -57,11 +57,17 @@
 
  # 06: ---- frontend (Vite, React, TailwindCSS)
  # inicializei um template react usando o Vite e arrumei o conflito de versões de pacotes e configurei o tailwindCSS v4, perparando o ambiente para mexer na ui
+ 
+ 
+ # 07: ---- frontend arquitetura e estrutura
+  - components/: componentes reutilizáveis e apresentacionais
+  - hooks/: custom hooks pra lógica de negócio e gerenciamento de estado
+  - services/: comunicação com a API
+  - types/: definições TS compartilhadas
 
-
-# =============
-#  DECISÕES 
-# =============
+# ============================
+#  DECISÕES TÉCNICAS (BACKEND)
+# ============================
 
 # Uso de TypeScript com OOP Estrita
 
@@ -69,12 +75,15 @@
 - Decisão: Adotarei TS tanto no front quanto no back
 - Justificativa: Ajuda na previsibilidade, facilita a modelagem do domínio (exemplo: periodico, AreaAvaliacao) e reduz erros em tempo de execução
 
+
+
 # Estratégia de versionamento (git flow simplificado)
 
 - Contexto: O projeto precisa de um histórico limpo e organizado, separando código em desenvolvimento 
 de código pronto para produção.
 - Decisão: Adotarei duas branches principais: main (código estável/produção) e develop (integração), novas funcionalidades sairão de develop (ex: feat/database-setup).
 - Justificativa: Evita quebrar a aplicação principal durante minha construção, facilita o code review e demonstra boas práticas de CI/CD e trabalho
+
 
 
 # ORM e DB (Prisma + SQLite)
@@ -88,6 +97,8 @@ de código pronto para produção.
 
 - Dei downgroad no prisma para a versão (5v) por erros de configuração. nota: A nova estrutura do prisma.config.ts era uma complexidade desnecessária para este projeto com SQLite
 
+
+
 # Padrão repository e processamento de arquivos
 
 - Contexto: Preciso inserir milhares de dados do CSV da CAPES no banco de dados sem acoplar a lógica de persistência diretamente nos scripts ou rotas.
@@ -95,11 +106,33 @@ de código pronto para produção.
 - Justificativa: Segundo algumas pesquisas, o padrão repository blinda a aplicação contra mudanças no ORM portanto usar streams e lotes inserindo de 5000 em 5000 evita estouro de memória na leitura do CSV, 
 isso deixa o processo seguro e performático independente do tamanho da base
 
+
+
 # Construção da API REST (Express + Orientação a Objetos)
 
 - Contexto: Era preciso expor os 171.111 registros do banco de dados para consumo do front, para performance através de paginação e os filtros
 - Decisão: Utilizei express.js estruturado com TS, criei as classes "Server" para inicialização e rotas e "PeriodicoController" para lidar com as requisições
 adotei a injeção de dependência, passando o "PeriodicoRepository" para o Controller via construtor
-- Justificativa: A injeção de dependência (princípio da inversão de dependência do SOLID) desacopla a camada HTTP da camada de banco de dados, deixando o código testável e manutenível 
-O processamento da paginaçãono backend garante que o navegador não congele ao lidar com uma base de dados grande
+- Justificativa: A injeção de dependência (princípio da inversão de dependência do SOLID) desacopla a camada HTTP da camada de banco de dados, deixando o código testável 
+e manutenível
 
+
+# ============================
+#  DECISÕES TÉCNICAS (FRONTEND)
+# ============================
+
+- Contexto: Precisava criar uma interface intuitiva pra consultar 171.111 periódicos científicos, com filtros facetados, paginação e visualizações de dados
+- Decisão: Adotei uma arquitetura baseada em componentes do react com separação clara
+- Justificativa: Esta estrutura deixa o código organizado, testável e escalável
+
+
+# Padrão service layer (ApiService.ts)
+
+- Contexto: Precisava centralizar toda comunicação HTTP com o backend e evitar código duplicado nos componentes
+- Decisão: Implementei uma classe ApiService que encapsula todas as chamadas à API REST
+
+- listarAreas(): busca lista de áreas únicas
+- buscarPeriodicos(): busca periodicos com filtros e paginação
+- obterEstatisticas(): busca distribuição por estrato
+
+- Justificativa: desacoplar os componentes da implementação específica da API
