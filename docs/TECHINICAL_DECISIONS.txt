@@ -40,6 +40,12 @@
     Total de registros no banco: 171111
     =========================================
 
+ # 05: ---- Com o banco populado, começo a construir a API REST 
+
+  optei por dividir em 3 etapas para manter a organização
+  1 task - Repository: adicionar os metodos de busca para ler do banco
+  2 task - Controller: receber  a requisição da web e chamar o repository
+  3 task - Router/server: subir o servidor express
 
 # =============
 #  DECISÕES 
