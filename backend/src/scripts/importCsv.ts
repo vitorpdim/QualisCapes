@@ -4,13 +4,13 @@
 
 // ===================================================================== \\
 //                       LÓGICA DO SCRIPT:                               \\
-//                                                                       \\ 
-//   1 salva no banco a cada 5000 linhas                                 \\
-//   2 ler o arquivo em formato de stream (aos poucos)                   \\
-//   3 extrai os dados baseados nas colunas exatas do CSV da sucupira    \\
-//   4 gera uuid nativo a partir da classe que criei                     \\
-//   5 Quando atinge o tamanho do lote, pausa para salvar no banco       \\  
-//   6 salva os que sobraram no último lote                              \\
+//                                                                       \\
+//   1 Limpa o banco de dados antes de iniciar para evitar duplicidade   \\
+//   2 Lê o arquivo em formato de stream (com controle de backpressure)  \\
+//   3 Extrai os dados baseados nas colunas exatas do CSV da Sucupira    \\
+//   4 Gera UUID nativo para cada registro mapeado                       \\
+//   5 Quando atinge o tamanho do lote, pausa para salvar no banco       \\
+//   6 Salva os registros que sobraram no último lote                    \\
 //                                                                       \\
 // ===================================================================== \\
 
@@ -24,54 +24,68 @@ import { PeriodicoRepository } from "../domain/repositories/PeriodicoRepository.
 
 const prisma = new PrismaClient();
 const repository = new PeriodicoRepository(prisma);
+const TAMANHO_LOTE = 5000;
+const CAMINHO_ARQUIVO = path.resolve("data", "qualis.csv");
 
+function criarPeriodicoDaLinha(linha: any): Periodico {
+  const issn = linha["ISSN"]?.trim() || "SEM-ISSN";
+  const titulo = linha["Título"]?.trim() || "SEM TITULO";
+  const area = linha["Área de Avaliação"]?.trim() || "DESCONHECIDA";
+  const estrato = linha["Estrato"]?.trim() as EstratoQualis;
+  
+  const id = crypto.randomUUID();
+  
+  return new Periodico(id, issn, titulo, area, estrato);
+}
+
+async function prepararBancoDados(): Promise<void> {
+  console.log("limpando o banco de dados antes de iniciar...");
+  await prisma.periodico.deleteMany();
+}
+
+// func principal
 async function importarDados() {
+  await prepararBancoDados();
+
   console.log("Iniciando a leitura do CSV...");
-  const caminhoArquivo = path.resolve("data", "qualis.csv");
-  const lotePeriodicos: Periodico[] = [];
-  const TAMANHO_LOTE = 5000; // 1
+
+  let lotePeriodicos: Periodico[] = [];
   let totalProcessado = 0;
 
-  fs.createReadStream(caminhoArquivo) // 2
-    .pipe(csv())
-    .on("data", async (linha) => {
-      // 3
-      const issn = linha["ISSN"]?.trim() || "SEM-ISSN";
-      const titulo = linha["Título"]?.trim() || "SEM TITULO";
-      const area = linha["Área de Avaliação"]?.trim() || "DESCONHECIDA";
-      const estrato = linha["Estrato"]?.trim() as EstratoQualis;
-      const id = crypto.randomUUID(); // 4
-      const novoPeriodico = new Periodico(id, issn, titulo, area, estrato);
+  const stream = fs.createReadStream(CAMINHO_ARQUIVO).pipe(csv());
 
+  try {
+    for await (const linha of stream) {
+      const novoPeriodico = criarPeriodicoDaLinha(linha);
       lotePeriodicos.push(novoPeriodico);
 
-      // 5
       if (lotePeriodicos.length >= TAMANHO_LOTE) {
-        const itensParaSalvar = [...lotePeriodicos];
-        lotePeriodicos.length = 0; // limpa o array atual
-
-        await repository.salvarEmLote(itensParaSalvar);
-        totalProcessado += TAMANHO_LOTE;
-        console.log(`⏳ Já salvamos ${totalProcessado} periódicos no banco...`);
-      }
-    })
-    .on("end", async () => {
-      // 6
-      if (lotePeriodicos.length > 0) {
         await repository.salvarEmLote(lotePeriodicos);
         totalProcessado += lotePeriodicos.length;
+        console.log(`Processados e salvos: ${totalProcessado} periódicos...`);
+        
+        lotePeriodicos = []; 
       }
+    }
 
-      const totalNoBanco = await repository.contarTodos();
-      console.log("=========================================");
-      console.log(`IMPORTAÇÃO CONCLUÍDA COM SUCESSO`);
-      console.log(`Total de registros no SQLite: ${totalNoBanco}`);
-      console.log("=========================================");
+    if (lotePeriodicos.length > 0) {
+      await repository.salvarEmLote(lotePeriodicos);
+      totalProcessado += lotePeriodicos.length;
+    }
 
-      await prisma.$disconnect();
-    })
-    .on("error", (erro) => {
-      console.error("Erro ao ler o CSV:", erro);
-    });
+    const totalNoBanco = await repository.contarTodos();
+    
+    console.log("=========================================");
+    console.log("IMPORTAÇÃO CONCLUÍDA COM SUCESSO");
+    console.log(`Total lido do CSV: ${totalProcessado}`);
+    console.log(`Total de registros no banco: ${totalNoBanco}`);
+    console.log("=========================================");
+
+  } catch (erro) {
+    console.error("Erro durante a importação:", erro);
+  } finally {
+    await prisma.$disconnect();
+  }
 }
+
 importarDados();

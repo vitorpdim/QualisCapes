@@ -14,11 +14,31 @@
  # 03: ----- Modificando e fazendo preparações de ambiente inicializei os arquivos essenciais
  # Instalei os pacotes e os frameworks
    
-   na pasta backend instalei e iniciei o prisma (CLI) e o prisma client. Inicializei o Prisma já configurado para SQLite utilizando " npx prisma init --datasource-provider sqlite " e "traduzi"
+   na pasta backend instalei e iniciei o prisma CLI e o prisma client. Inicializei o Prisma já 
+   configurado para SQLite utilizando " npx prisma init --datasource-provider sqlite " e "traduzi"
    a classe Periodico para linguagem do banco de dados
    - Para criar a tabela fisica utilizei o prisma para criar o arquivo, uma pasta migrations 
    e o arquivo dev.db com: " npx prisma migrate dev --name init_periodicos_table "
-   
+
+ # 04: ----- Criei um script para cadenciar a injeção de dados, na primeira tentativa obtive um lock enm disco no 
+ registro 40.000. 
+ 
+   entendendo a natureza do SQLite, ele salva tudo em um unico arquivo (no caso o dev.db), quando fiz uma 
+   operação escrita com createMany ele tranca o arquivo, então se outra tentativa de escrita chegar enquanto 
+   ele esta trancado ele espera e se esperar demais ele dá timeout
+
+   procurando o erro descobri a causa, o node.js
+   o método .on("data") que usei no csv-parser lê o arquivo muito rapido e não espera o await repository.salvarEmLote() terminar
+   ou seja, ele disparou a primeira leva de 5000 para o banco, e milissegundos depois, sem o banco ter terminado a primeira ele
+   disparou a de 10.000, a de 15.000, e chegou uma hora que o SQLite recebeu tantas requisições simultâneas de escrita que ele travou
+   - Para resolver o problema usei um iterador diferente (for await) e limpei a tabela antes de iniciar novamente
+
+    O resultado:
+    =========================================
+    IMPORTAÇÃO CONCLUÍDA COM SUCESSO
+    Total lido do CSV: 171111
+    Total de registros no banco: 171111
+    =========================================
 
 
 # =============
@@ -50,7 +70,7 @@ de código pronto para produção.
 
 - Dei downgroad no prisma para a versão (5v) por erros de configuração. nota: A nova estrutura do prisma.config.ts era uma complexidade desnecessária para este projeto com SQLite
 
-# Padrão Repository e processamento de Arquivos
+# Padrão repository e processamento de arquivos
 
 - Contexto: Preciso inserir milhares de dados do CSV da CAPES no banco de dados sem acoplar a lógica de persistência diretamente nos scripts ou rotas.
 - Decisão: Implementei o *Repository Pattern* "PeriodicoRepository" seguindo OOP para o CSV, usei a biblioteca "csv-parser" e processamento em *Streams* pra carregar em lotes.
