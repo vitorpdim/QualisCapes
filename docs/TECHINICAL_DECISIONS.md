@@ -48,4 +48,4 @@ de código pronto para produção.
 # ------------------------------------------------------------------------------------------------------
 - Justificativa: O SQLite reside em um único arquivo local (portabilidade extrema). O Prisma integra perfeitamente com TypeScript, entregando tipagem estrita desde a consulta no banco até a resposta da API.
 
-- Dei downgroad no prisma
+- Dei downgroad no prisma para a versão (5v) por erros de configuração. nota: A nova estrutura do prisma.config.ts era uma complexidade desnecessária para este projeto com SQLite

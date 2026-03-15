@@ -1,0 +1,20 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Periodico {
+  id            String @id @default(uuid())
+  issn          String
+  titulo        String
+  areaAvaliacao String
+  estrato       String
+
+  @@map("periodicos")
+  @@index([issn])
+  @@index([titulo])
+}
