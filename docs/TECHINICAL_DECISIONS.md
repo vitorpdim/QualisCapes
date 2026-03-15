@@ -49,3 +49,9 @@ de código pronto para produção.
 - Justificativa: O SQLite reside em um único arquivo local (portabilidade extrema). O Prisma integra perfeitamente com TypeScript, entregando tipagem estrita desde a consulta no banco até a resposta da API.
 
 - Dei downgroad no prisma para a versão (5v) por erros de configuração. nota: A nova estrutura do prisma.config.ts era uma complexidade desnecessária para este projeto com SQLite
+
+# Padrão Repository e processamento de Arquivos
+
+- Contexto: Preciso inserir milhares de dados do CSV da CAPES no banco de dados sem acoplar a lógica de persistência diretamente nos scripts ou rotas.
+- Decisão: Implementei o *Repository Pattern* "PeriodicoRepository" seguindo OOP para o CSV, usei a biblioteca "csv-parser" e processamento em *Streams* pra carregar em lotes.
+- Justificativa: Segundo algumas pesquisas, o padrão repository blinda a aplicação contra mudanças no ORM portanto usar streams e lotes inserindo de 5000 em 5000 evita estouro de memória na leitura do CSV, isso deixa o processo seguro e performático independente do tamanho da base
