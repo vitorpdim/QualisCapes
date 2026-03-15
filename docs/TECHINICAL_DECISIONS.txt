@@ -57,6 +57,8 @@
 
  # 06: ---- frontend (Vite, React, TailwindCSS)
  # inicializei um template react usando o Vite e arrumei o conflito de versões de pacotes e configurei o tailwindCSS v4, perparando o ambiente para mexer na ui
+
+
 # =============
 #  DECISÕES 
 # =============
