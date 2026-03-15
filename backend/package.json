@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db:migrate": "prisma migrate dev --name init_periodicos_table"
+    "db:migrate": "prisma migrate dev --name init_periodicos_table",
+    "dev": "tsx watch src/server.ts"
   },
   "keywords": [],
   "author": "",

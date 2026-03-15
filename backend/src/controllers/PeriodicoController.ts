@@ -5,6 +5,7 @@
 import { Request, Response } from "express";
 import { PeriodicoRepository, FiltrosBusca } from "../domain/repositories/PeriodicoRepository.js";
 
+// injeção de dependencia
 export class PeriodicoController {
   private readonly repository: PeriodicoRepository;
 
