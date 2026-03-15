@@ -94,4 +94,21 @@ export class PeriodicoRepository {
       }))
     };
   }
+
+    // RF06: agrupamento para gerar o gráfico no front
+  async obterResumoPorEstrato(area?: string) {
+    const where = area ? { areaAvaliacao: area } : {};
+
+    const agrupamento = await this.db.periodico.groupBy({
+      by: ['estrato'],
+      where,
+      _count: { estrato: true },
+      orderBy: { estrato: 'asc' }
+    });
+
+    return agrupamento.map(item => ({
+      estrato: item.estrato,
+      quantidade: item._count.estrato
+    }));
+  }
 }
