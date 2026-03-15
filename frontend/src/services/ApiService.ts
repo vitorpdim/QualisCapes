@@ -47,7 +47,7 @@ export class ApiService {
       return await response.json();
     } catch (erro) {
       console.error("Erro ao buscar periódicos:", erro);
-      throw erro; // repasso o erro para a interface exibir um alerta, se necessário
+      throw erro; // repasso o erro pra interface mostrar
     }
   }
 
