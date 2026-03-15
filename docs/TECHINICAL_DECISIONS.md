@@ -1,23 +1,51 @@
------ Requisitos funcionais (RF):
+ # 01: ----- Analisei o enunciado e comecei a etruturar os planos de requisitos
+ # Mapeei referencias (Benchmarking) para criar uma interface superior à original
 
-RF01: O sistema deve permitir a importação/carga inicial dos dados a partir do arquivo CSV da CAPES
+    1. Plataforma sucupira:
+    2. Scimago journal & country rank
+    3. Google scholar metrics
 
-RF02: O sistema deve listar todas as áreas disponíveis na base
+ # 02: ----- Analisando o CSV identifiquei a formatação (ISSN, Título, Área de avaliação, Estrato)
+ # Pra manter a performance e semplicidade de setup do SQLite, modelarei diretamente
 
-RF03: O usuer deve poder buscar periódicos por >> Título ou >> ISSN
+   Ao invés de criar um sistema complexo com tabelas separadas pra "Áreas" e "Periódicos" e fazer
+   varios joins (já que os dados do CSV são planos), vou criar uma única tabela otimizada chamada "Periodico"
 
-RF04: O user deve poder filtrar os resultados por estrato QUALIS (A1, A2, B1, B2, B3, B4, B5, C) e por area de avaliação
+ # 03: ----- Modificando e fazendo preparações de ambiente inicializei os arquivos essenciais
+ # Instalei os pacotes e os frameworks
+   
+   na pasta backend instalei e iniciei o prisma (CLI) e o prisma client. Inicializei o Prisma já configurado para SQLite utilizando " npx prisma init --datasource-provider sqlite " e "traduzi"
+   a classe Periodico para linguagem do banco de dados
+   - Para criar a tabela fisica utilizei o prisma para criar o arquivo, uma pasta migrations 
+   e o arquivo dev.db com: " npx prisma migrate dev --name init_periodicos_table "
+   
 
-RF05: O sistema deve apresentar os resultados em uma tabela paginada ou com scroll infinito 
 
-RF06: O sistema deve exibir um resumo estatístico (gráfico ou tabela) mostrando a contagem de periódicos por estrato em uma determinada area
+# =============
+#  DECISÕES 
+# =============
 
------- Requisitos não funcionais (RNF):
+# Uso de TypeScript com OOP Estrita
 
-RNF01: O backend vai ser construído em Node.js com TypeScript, seguindo OOP estrito
+- Contexto: O projeto exige alta qualidade de código, manutenibilidade, e possuo familiaridade com a linguagem
+- Decisão: Adotarei TS tanto no front quanto no back
+- Justificativa: Ajuda na previsibilidade, facilita a modelagem do domínio (exemplo: periodico, AreaAvaliacao) e reduz erros em tempo de execução
 
-RNF02: O banco de dados relacional escolhido vai ser SQLite, visando facilidade de setup e portabilidade para o avaliador do case
+# Estratégia de versionamento (git flow simplificado)
 
-RNF03: O frontend será em React (via Vite) com tailwindCSS
+- Contexto: O projeto precisa de um histórico limpo e organizado, separando código em desenvolvimento 
+de código pronto para produção.
+- Decisão: Adotarei duas branches principais: main (código estável/produção) e develop (integração), novas funcionalidades sairão de develop (ex: feat/database-setup).
+- Justificativa: Evita quebrar a aplicação principal durante minha construção, facilita o code review e demonstra boas práticas de CI/CD e trabalho
 
-RNF04: A comunicação entre front e back sera utilizada API RESTful
+
+# ORM e DB (Prisma + SQLite)
+
+- Contexto: O projeto precisa de um banco de dados relacional e de uma forma segura de interagir com ele via código, assim  não sera necessario instalar serviços para rodar o projeto (como Postgres).
+- Decisão: Adotei o SQLite como banco físico e o Prisma ORM para a comunicação 
+# ------------------------------------------------------------------------------------------------------  
+  Adicionei @@index nas colunas issn e titulo pois como a base da CAPES é grande e o requisito (RF03) é buscar por esses campos, os índices garantirão que a busca seja EXTREMAMENTE rapida
+# ------------------------------------------------------------------------------------------------------
+- Justificativa: O SQLite reside em um único arquivo local (portabilidade extrema). O Prisma integra perfeitamente com TypeScript, entregando tipagem estrita desde a consulta no banco até a resposta da API.
+
+- Dei downgroad no prisma
