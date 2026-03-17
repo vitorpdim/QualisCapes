@@ -33,7 +33,7 @@ export function Dashboard() {
   const [filtros, setFiltros] = useState<FiltrosBusca>({});
   const [areas, setAreas] = useState<string[]>([]);
   const [abaAtiva, setAbaAtiva] = useState<AbaAtiva>("tabela");
-  const [setCarregandoAreas] = useState<boolean>(true);
+  const [carregandoAreas, setCarregandoAreas] = useState<boolean>(true);
 
   const {
     periodicos,
@@ -111,19 +111,19 @@ export function Dashboard() {
   // ==============================================================
 
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
 
   {/* --------------------- HEADER ----------------------------- */}
 
-      <header>
-        <div>
-          <div>
-            <div>
-              <GraduationCap />
+      <header className="bg-white border-b border-gray-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-blue-600 rounded-xl">
+              <GraduationCap className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h1> Sistema QUALIS CAPES </h1>
-              <p> Consulta e visualização de classificações de periódicos científicos</p>
+              <h1 className="text-2xl font-bold text-gray-900"> Sistema QUALIS CAPES </h1>
+              <p className="text-sm text-gray-600"> Consulta e visualização de classificações de periódicos científicos</p>
             </div>
           </div>
         </div>
