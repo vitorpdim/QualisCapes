@@ -131,12 +131,12 @@ export function Dashboard() {
 
  {/* ------------------- MAIN SECTION -----------------------  */}
 
-      <main>
-        <div>
+      <main className = "max-w-7x1 mx auto px-4 sm:px-8 py-8">
+        <div className = "grid grid-cols-1 lg:grid-cols-4 gap-6">
 
       {/* ------------ FILTROS SIDEBAR ------------------ */}
 
-          <aside>
+          <aside className = "lg: col-span-1">
             <SearchFilters
               filtros={filtros}
               areas={areas}
@@ -147,15 +147,15 @@ export function Dashboard() {
 
       {/* --------------- RESULTADOS E ESTATÍSTICAS ---------------- */}
           
-          <section>
-            <div>
+          <section className = "lg: col-span-3 space-y-6">
+            <div className="bg-white rounded-x1 shadow-sm border border-gray-200 overflow-hidden">
               <Tabs
                 tabs={tabs}
                 activeTab={abaAtiva}
                 onTabChange={handleAbaChange}
               />
 
-              <div>
+              <div className = "p-6">
                 {abaAtiva === "tabela" ? (
                   <>
                     <PeriodTable
@@ -163,7 +163,7 @@ export function Dashboard() {
                       loading={loadingPeriodicos}
                     />
                     {!loadingPeriodicos && periodicos.length > 0 && (
-                      <div>
+                      <div className = "mt-6">
                         <Pagination
                           paginaAtual={paginaAtual}
                           totalPaginas={totalPaginas}
