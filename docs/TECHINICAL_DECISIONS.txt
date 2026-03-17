@@ -72,6 +72,10 @@
   # 09: --- Montei todo esqueleto das paginas
   configurei a estrutura do frontend inteiro completamente integrado em uma unica paginas, trabalhei a componetização e separei o código no meu estilo de organização
 
+  # 10: --- Todo o escopo do projeto esta pronto e funcional (finalizado as 00:27 --- 17/03/2026)
+  como ultima task vou trabalhar na UI/UX e deixar o design agradavel
+  Ja estruturei algumas ideias, com paleta de cores e construi um wireframe
+
 # ============================
 #  DECISÕES TÉCNICAS (BACKEND)
 # ============================
@@ -175,3 +179,7 @@ A animação via CSS (implementando a partir de tutoriais) deixou um polimento p
 
 - Contexto: precisava de uma forma de alternar entre a tabela de dados e o gráfico de estatísticas sem poluir a tela
 - Decisão: Implementei um componente de tabs que gerencia a navegação entre a aba "periódicos" (tabela) e "estatísticas" (gráficos).
+
+# ============================
+#  DECISÕES TÉCNICAS (DESIGN)
+# ============================
