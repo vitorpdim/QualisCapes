@@ -22,7 +22,7 @@ export interface PaginationProps {
 export function Pagination({ paginaAtual, totalPaginas, total, onPaginaChange }: PaginationProps) {
   
   // ==============================================================
-  // REGRAS DE NEGÓCIO (logica de exibição de páginas)
+  // REGRAS DE NEGÓCIO logica de exibição de páginas
   // ==============================================================
   
   const gerarPaginas = (): (number | string)[] => {

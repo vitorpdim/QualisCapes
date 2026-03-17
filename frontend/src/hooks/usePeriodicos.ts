@@ -36,7 +36,7 @@ export function usePeriodicos(): UsePeriodicos {
   const buscar = useCallback(async (filtros: FiltrosBusca, pagina: number = 1) => {
     setLoading(true);
     setErro(null);
-
+ 
     try {
       const resposta = await apiService.buscarPeriodicos(filtros, pagina, 20);
       
