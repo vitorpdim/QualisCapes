@@ -69,6 +69,9 @@
   usePeriodicos() que gerencia a busca de periódicos com estado de load, erro, paginação e dados
   useEstatisticas() que gerencia busca de estatísticas com estado de loading e erro
 
+  # 09: --- Montei todo esqueleto das paginas
+  configurei a estrutura do frontend inteiro completamente integrado em uma unica paginas, trabalhei a componetização e separei o código no meu estilo de organização
+
 # ============================
 #  DECISÕES TÉCNICAS (BACKEND)
 # ============================
@@ -145,3 +148,30 @@ e manutenível
 
 - Contexto: Componentes precisam gerenciar estado assíncrono, loading states e tratamento de erros de forma clean
 - Justificativa: eles encapsulam lógicas muito complexas e efeitos colaterais, os componentes ficam mais clean e focados na exibição
+
+# Interface de busca facetada 
+
+- Contexto: O requisito pedia filtros intuitivos por área, estrato e termo de busca, me inspirei no SCImago Journal Rank, eu foquei 
+em fazer uma UX superior à plataforma sucupira original
+- Decisão: Implementei um faceted search com campo de busca textual para título/ISSN, dropdown para a área de avaliação, botões para os estratos e um botão contextual pra limpar filtros
+- Justificativa: Pesquisando, exnontrei um padrão de mercado para filtros complexos (usado por amazon, google scholar, etc). Cada filtro é independente e pode ser combinado
+
+# Tabela de dados com performance
+
+- Contexto: era necessário mostrar milhares de registros em uma tabela sem engasgar o navegador
+- Decisão: Implementei a paginação diretamente no backend trazendo somente 20 registros por página, criei loading states (spinner/skeleton) durante o carregamento, empty states com mensagens claras quando
+nao obtivera resultado
+- Justificativa: é essencial para a performance; tentar renderizar 171k linhas no DOM seria inviável. os estados de loading e empty melhoram drasticamente a UX pois o user nunca fica olhando para uma tela em branco sem saber o que aconteceu
+
+# Visualização de estatísticas (EM DESENVOLVIMENTO)
+
+- Contexto: O requisito pedia para "visualizar a distribuição" dos periódicos, eu precisava de algo mais dinâmico e interessante do que apenas uma tabela de totais
+- Decisão: Estou arquitetando um design onde utilizo barras horizontais (com animaçao) com largura proporcional representando a % do total, usando a mesma paleta de cores dos botões de filtro
+ também implementei cards de resumo mostrando o total de periódicos dos estratos A contra os da base B
+- Justificativa: Barras horizontais são muito mais legíveis que gráficos de pizza pra comparar múltiplas categorias. 
+A animação via CSS (implementando a partir de tutoriais) deixou um polimento profissional e como fiz nativamente não precisei instalar bibliotecas pesadas como o chart.js, mantendo o bundle leve
+
+# Sistema de abas (tabs)
+
+- Contexto: precisava de uma forma de alternar entre a tabela de dados e o gráfico de estatísticas sem poluir a tela
+- Decisão: Implementei um componente de tabs que gerencia a navegação entre a aba "periódicos" (tabela) e "estatísticas" (gráficos).
