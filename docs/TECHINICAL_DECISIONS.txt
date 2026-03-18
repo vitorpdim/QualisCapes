@@ -183,3 +183,90 @@ A animação via CSS (implementando a partir de tutoriais) deixou um polimento p
 # ============================
 #  DECISÕES TÉCNICAS (DESIGN)
 # ============================
+
+# Interface de busca facetada
+
+- Contexto: O requisito pedia filtros por área, estrato e termo de busca, me inspirei no scimago journal rank, eu precisava
+ de uma UX superior à plataforma sucupira original
+- Decisão: Implementei um sistema de search faceted com campo de busca pra título/ISSN, dropdown pra área
+ de avaliação, botões coloridos pros estratos QUALIS e um botão contextual pra "limpar filtros"
+- Justificativa: pelo que pesquisei a busca facetada é um padrão de mercado pra filtros complexos (é usada pela amazon, google scholar, etc)
+ cada filtro é independente e pode ser combinado, oferecendo máxima flexibilidade ao usuário
+
+# Design system e paleta de cores
+
+- Contexto: Eu precisava de uma paleta de cores que fosse visualmente atraente, acessível e diferente do clichê padrão
+- Decisão: Adotei um gradient system baseado em cores frias e neutras, 
+  Estratos A (excelentes) vão do verde-esmeralda até o azul-céu (do tailwind); 
+  Estratos B (bons) vão do azul até tons mais neutros como cinza; 
+  Estrato C (baixo) fica em vermelho, o background principal usa um gradient de cinza
+- Justificativa: A progressão cromática de verde pra vermelho é universalmente compreendida e cores frias transmitem o profissionalismo pra um sistema acadêmico, 
+o uso do tailwindCSS da consistência em toda a aplicação
+
+# Tabela de dados com performance
+
+- Contexto: Era preciso exibir milhares de registros em uma tabela sem engasgar ou travar o navegador
+- Decisão: Implementei a paginação diretamente no backend trazendo só 20 registros por página, criei loading states durante o carregamento, empty states
+ mensagens quando não há resultados e adicionei hover effects em cada linha
+- Justificativa: A paginação backend-side é bom pra performance; 
+tentar renderizar 171k linhas no DOM seria inviável 
+Os estados de loading e empty melhoram drasticamente a UX pois o usuário nunca fica olhando pra uma tela em branco sem saber oq aconteceu
+
+# Visualização de estatísticas
+
+- Contexto: O requisito pedia para "visualizar a distribuição" dos periódicos, eu precisava de algo mais dinâmico e interessante do que apenas uma tabela de totais
+- Decisão: criei barras horizontais animadas com largura proporcional, usando a mesma paleta de cores dos botões de filtro,  incluí cards de resumo com o total de periódicos dos estratos A contra os da base B
+- Justificativa: Barras horizontais são muito mais legíveis que gráficos de pizza pra comparar multiplas categorias, ja animaçao deu um polimento
+profissional e como fiz nativamente não precisei instalar bibliotecas pesadas como o Chart.js, deixando o bundle mais leve
+
+# Sistema de abas
+
+- Contexto: Precisava de uma forma de alternar entre a tabela de dados e o gráfico de estatísticas sem poluir a tela
+- Decisão: implementei um componente de tabs que gerencia a navegação entre a aba da tabela e a de graficos
+
+# Responsividade e Mobile-First
+
+- Decisão: implementei um grid responsivo no mobile (< 1024px), os filtros ficam empilhados acima da tabela; no desktop eles vão para uma barra lateral esquerda fixa. 
+adicionei tratamento de overflow pra a tabela ter scroll horizontal no celular
+- Justificativa: usar a grid do tailwind deixou uma adaptação fluida sem quebrar o layout
+
+# Estados de interface
+
+- Contexto: Aplicações lidam com latência de rede, falhas no servidor ou buscas que não retornam nada
+- Decisão: mapeei e implementei 3 estados vitais em cada componente: 
+loading (indicador visual + "Carregando..."), 
+Empty (svg de pasta vazia + instrução) 
+Error (tratamento de falhas via hook)
+
+# Otimização de renderização
+
+- Contexto: re-renderizações desnecessárias da árvore de componentes poderiam obstruir a experiência e deixar a digitação dos filtros lenta
+- Decisão: utilizei "useCallback" pra memorizar funções passadas via props, implementei "useEffect" com dependências definidas
+pra sincronizar dados com a API, e usei renderização condicional
+- Justificativa: O "useCallback" evita que componentes filhos como paginação ou a própria tabela re-renderizem atoa
+# Acessibilidade (a11y)
+
+# ============================
+# EXTRAS E MELHORIAS FUTURAS
+# ============================
+
+# Resumo da stack frontend
+
+- React (18.3.1)
+- TypeScript (5.5.3)
+- Vite (5.4.2): ferramenta de build
+- TailwindCSS (3.4.1): framweork CSS pra agilidade
+- Lucide React: icones minimalistas em SVG
+
+# Diferenciais de UI/UX
+- Sistema de cores progressivo mapeando os estratos do Qualis
+- Transições nativas e animadas nos botões e nas barras estatísticas
+- Busca facetada e paginação
+- Interface amplamente inspirada no google scholar e scimago journal rank
+
+# Melhorias Futuras (que eu faria)
+- Adicionar um debounce na digitação do campo de busca textual para evitar requests em excesso
+- Adicionar botões pra exportar os resultados da consulta em PDF ou CSV
+- Salvar o estado dos filtros ativos no "localStorage" pra que continuem lá ao recarregar a página
+- Adicionar suporte a dark mode
+- Implementar uma função de favoritar e comparar periódicos
