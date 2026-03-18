@@ -102,6 +102,7 @@ export function PeriodTable({ periodicos, loading }: PeriodTableProps) {
                 </td>
               </tr>
             ))}
+
           </tbody>
         </table>
       </div>
