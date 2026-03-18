@@ -93,7 +93,9 @@ export function Statistics({ estatisticas, loading }: StatisticsProps) {
                 <span className = "text-sm font-semibold text-gray-900">{stat.quantidade.toLocaleString("pt-BR")}</span>
               </div>
               <div className = "relative h-8 bg-gray-100 text-gray-100 roounded-lg overflow-hidden">
-                <div style={{ width: `${porcentagem}%` }} />
+                
+                <div className = {`absolute top-0 left-0 h-full ${CORES_ESTRATO[stat.estrato]} transition-all duration-500 ease-out rounded-lg`} 
+                style={{ width: `${porcentagem}%` }} />
               </div>
             </div>
           );
@@ -101,17 +103,20 @@ export function Statistics({ estatisticas, loading }: StatisticsProps) {
       </div>
 
 {/* ------------ resumo consolidado estratos A e B --------------- */}
-      <div>
-        <div>
-          <div>
-            <p>Estratos A</p>
-            <p>
+
+      <div className = "mt-6 pt-6 border-t border-gray-200">
+        <div className = "grid grid-cols-2 gap-4">
+          <div className = "bg-emerald-50 rounded-lg p-4">
+
+            <p className = "text-sm text-emerald-700 font-medium mb-1">Estratos A</p>
+            <p className = "text-2xl font-bold text-emerald-900">
               {estatisticas.filter(e => e.estrato.startsWith("A")).reduce((acc, e) => acc + e.quantidade, 0).toLocaleString("pt-BR")}
             </p>
           </div>
-          <div>
-            <p>Estratos B</p>
-            <p>
+
+          <div className = "bg-blue-50 rounded-lg p-4">
+            <p className = "text-sm text-blue-700 font-medium mb-1 ">Estratos B</p>
+            <p className = "text-2xl font-bold text-blue-900">
               {estatisticas.filter(e => e.estrato.startsWith("B")).reduce((acc, e) => acc + e.quantidade, 0).toLocaleString("pt-BR")}
             </p>
           </div>
